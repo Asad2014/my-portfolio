@@ -1,7 +1,16 @@
-import React from 'react'
+ "use client"
+import React from 'react';
+import { useState } from 'react';
+import { AiOutlineMenu, AiOutlineClose } from "react-icons/ai";
+
 
 
 const Navbar = () => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen)
+  }
   return (
     <div className='container pt-8'>
         <div className='flex justify-between items-center'>
@@ -13,8 +22,24 @@ const Navbar = () => {
             <li className='menuLink'><a href='#skills'>Skills</a></li>
             <li className='menuLink'><a href='#contact'>Contact</a></li>
             </ul> 
-               
+            <div className='md:hidden' onClick={toggleMenu}>
+            {isMenuOpen ? <AiOutlineClose size={30} /> :
+            <AiOutlineMenu size={30} />
+            }
+            </div>
         </div>
+ 
+         {isMenuOpen && (
+          <ul className='flex flex-col gap-4 mt-4 md:hidden'>
+            <li className='flex flex-col gap-4'>
+              <a href="#hero" onClick={toggleMenu}>Home</a>
+              <a href="#about" onClick={toggleMenu}>About</a>
+              <a href="#projects" onClick={toggleMenu}>Projects</a>
+              <a href="#skills" onClick={toggleMenu}>Skills</a>
+              <a href="#contact" onClick={toggleMenu}>Contact</a>
+            </li>
+          </ul>
+        )}
     </div>
   )
 }
