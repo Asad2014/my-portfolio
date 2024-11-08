@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { AiOutlineCheckSquare } from 'react-icons/ai';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
-import Navbar from './Navbar';
+
 
 const Skills = () => {
   useEffect(() => {

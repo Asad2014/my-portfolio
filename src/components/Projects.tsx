@@ -1,7 +1,7 @@
 import React from 'react'
 import Heading from './Heading';
 import Card from './Card';
-import Navbar from './Navbar';
+
 
 const data = [
   {
