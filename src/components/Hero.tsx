@@ -23,7 +23,7 @@ const Hero = () => {
               />
             </h1>
             <p className="mb-8 leading-relaxed text-white">
-            I’m a passionate web developer specializing in creating responsive, interactive websites that prioritize seamless user experiences. With expertise in HTML, CSS, JavaScript, and modern frameworks like React and Next.js, I specialize in turning creative ideas into functional, visually engaging web applications.
+            I’m a passionate web developer specializing in creating responsive, interactive websites that prioritize seamless user experiences. With expertise in HTML, CSS, Typescript, and modern frameworks like React and Next.js, I specialize in turning creative ideas into functional, visually engaging web applications.
             </p>
           </div>
           <div className="lg:max-w-lg lg:w-full md:w-1/2 w-5/6">
