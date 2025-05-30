@@ -1,92 +1,184 @@
-import React from 'react'
+
+'use client';
+
+import React, { useEffect, useRef, useState } from 'react';
+import AOS from 'aos';
+import 'aos/dist/aos.css';
+import { FiMail, FiSend, FiUser, FiMessageSquare } from 'react-icons/fi';
 
 const Contact = () => {
+  const [dimensions, setDimensions] = useState({ width: 1000, height: 1000 }); // Default values for SSR
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    message: ''
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+
+  useEffect(() => {
+    AOS.init({
+      duration: 1000,
+      once: true,
+      easing: 'ease-out',
+    });
+
+    if (typeof window !== 'undefined') {
+      setDimensions({
+        width: window.innerWidth,
+        height: window.innerHeight
+      });
+
+      const handleResize = () => {
+        setDimensions({
+          width: window.innerWidth,
+          height: window.innerHeight
+        });
+      };
+
+      window.addEventListener('resize', handleResize);
+      return () => window.removeEventListener('resize', handleResize);
+    }
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setSubmitStatus('idle');
+
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        setSubmitStatus('success');
+        setFormData({ name: '', email: '', message: '' });
+      } else {
+        setSubmitStatus('error');
+      }
+    } catch {
+      setSubmitStatus('error');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
-    <div id='contact'>
-      <section className="text-gray-600 body-font relative">
-  <div className="container px-5 py-24 mx-auto flex sm:flex-nowrap flex-wrap">
-    <div className="lg:w-2/3 md:w-1/2 bg-gray-300 rounded-lg overflow-hidden sm:mr-10 p-10 flex items-end justify-start relative">
-      <iframe
-        width="100%"
-        height="100%"
-        className="absolute inset-0"
-        frameBorder={0}
-        title="map"
-        marginHeight={0}
-        marginWidth={0}
-        scrolling="no"
-        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d28842.517180949817!2d68.32541280269373!3d25.36076909690981!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x394c70644717a901%3A0x2a63b3e36d7135ee!2sLatifabad%2C%20Hyderabad%2C%20Sindh%2C%20Pakistan!5e0!3m2!1sen!2s!4v1729196833055!5m2!1sen!2s"
-        style={{ filter: "contrast(1.2) opacity(0.4)" }}
-      />
-      <div className="bg-white relative flex flex-wrap py-6 rounded shadow-md">
-        <div className="lg:w-1/2 px-6">
-          <h2 className="title-font font-semibold text-gray-900 tracking-widest text-xs"data-aos="zoom-in-up">
-            ADDRESS
-          </h2>
-          <p className="mt-1"data-aos="zoom-in-up">
-            Latifabad,Hyderabad
-          </p>
+    <section
+      id="contact"
+      className="relative min-h-screen w-full bg-black flex flex-col items-center justify-center py-20 overflow-hidden"
+    >
+      {/* Background pattern */}
+      <div className="absolute inset-0">
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff0a_1px,transparent_1px),linear-gradient(to_bottom,#ffffff0a_1px,transparent_1px)] bg-[size:24px_24px]" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black via-transparent to-black" />
+      </div>
+
+      {/* Floating particles */}
+      <div className="absolute inset-0 overflow-hidden">
+        {[...Array(20)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute w-1 h-1 bg-white/20 rounded-full"
+            style={{
+              left: Math.random() * dimensions.width,
+              top: Math.random() * dimensions.height,
+              animation: `float-${i} ${10 + Math.random() * 20}s ease-in-out infinite alternate`
+            }}
+          />
+        ))}
+      </div>
+
+      <div className="relative z-10 w-full container mx-auto px-4">
+        <h2
+          data-aos="fade-up"
+          data-aos-easing="ease-out"
+          className="text-4xl md:text-5xl lg:text-6xl font-bold text-center mb-16"
+        >
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400">
+            Get in Touch
+          </span>
+        </h2>
+
+        <div
+          data-aos="zoom-in"
+          data-aos-easing="ease-out"
+          className="max-w-2xl mx-auto bg-white/5 backdrop-blur-sm rounded-2xl p-8 shadow-2xl"
+        >
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="space-y-4">
+              <div className="relative">
+                <FiUser className="absolute left-4 top-1/2 -translate-y-1/2 text-white/50" />
+                <input
+                  type="text"
+                  placeholder="Your Name"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  className="w-full bg-white/5 border border-white/10 rounded-lg py-3 pl-12 pr-4 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300"
+                  required
+                />
+              </div>
+
+              <div className="relative">
+                <FiMail className="absolute left-4 top-1/2 -translate-y-1/2 text-white/50" />
+                <input
+                  type="email"
+                  placeholder="Your Email"
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  className="w-full bg-white/5 border border-white/10 rounded-lg py-3 pl-12 pr-4 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300"
+                  required
+                />
+              </div>
+
+              <div className="relative">
+                <FiMessageSquare className="absolute left-4 top-4 text-white/50" />
+                <textarea
+                  placeholder="Your Message"
+                  value={formData.message}
+                  onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                  className="w-full bg-white/5 border border-white/10 rounded-lg py-3 pl-12 pr-4 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 min-h-[150px]"
+                  required
+                />
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              className="w-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 text-white font-medium py-3 px-6 rounded-lg flex items-center justify-center gap-2 hover:opacity-90 transition-opacity duration-300 disabled:opacity-50"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              ) : (
+                <>
+                  <FiSend />
+                  Send Message
+                </>
+              )}
+            </button>
+
+            {submitStatus === 'success' && (
+              <p className="text-green-400 text-center" data-aos="fade-in">
+                Message sent successfully! I will get back to you soon.
+              </p>
+            )}
+
+            {submitStatus === 'error' && (
+              <p className="text-red-400 text-center" data-aos="fade-in">
+                Something went wrong. Please try again later.
+              </p>
+            )}
+          </form>
         </div>
-        <div className="lg:w-1/2 px-6 mt-4 lg:mt-0">
-          <h2 className="title-font font-semibold text-gray-900 tracking-widest text-xs"data-aos="zoom-in-up">
-            EMAIL
-          </h2>
-          <a className="text-blue-500 leading-relaxed"data-aos="zoom-in-up">Asadkk2014@gmail.com</a>
-          <h2 className="title-font font-semibold text-gray-900 tracking-widest text-xs mt-4"data-aos="zoom-in-up">
-            PHONE
-          </h2>
-          <p className="leading-relaxed"data-aos="zoom-in-up">0347-2454751</p>
-        </div>
       </div>
-    </div>
-    <div className="lg:w-1/3 md:w-1/2 bg-black flex flex-col md:ml-auto w-full md:py-8 mt-8 md:mt-0">
-      <h2 className="title-font sm:text-5xl text-5xl mb-4 font-medium text-white">
-        Contact
-      </h2>
-         <div className="relative mb-4">
-        <label htmlFor="name" className="leading-7 text-sm text-white"data-aos="zoom-in-up">
-          Name
-        </label>  
-        <input
-          type="text"
-          id="name"
-          name="name"
-          className="w-full bg-white rounded border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
-        />
-      </div>
-      <div className="relative mb-4">
-        <label htmlFor="email" className="leading-7 text-sm text-white"data-aos="zoom-in-up">
-          Email
-        </label>
-        <input
-          type="email"
-          id="email"
-          name="email"
-          className="w-full bg-white rounded border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
-        />
-      </div>
-      <div className="relative mb-4">
-        <label htmlFor="message" className="leading-7 text-sm text-white"data-aos="zoom-in-up">
-          Message
-        </label>
-        <textarea
-          id="message"
-          name="message"
-          className="w-full bg-white rounded border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 h-32 text-base outline-none text-gray-700 py-1 px-3 resize-none leading-6 transition-colors duration-200 ease-in-out"
-          defaultValue={""}
-        />
-      </div>
-      <button className="text-white bg-blue-500 border-0 py-2 px-6 focus:outline-none hover:bg-blue-600 rounded text-lg">
-        Send Message
-      </button>
-    </div>
-  </div>
-</section>
-    </div>
-  )
-}
+    </section>
+  );
+};
 
-export default Contact
-
-
-
+export default Contact;

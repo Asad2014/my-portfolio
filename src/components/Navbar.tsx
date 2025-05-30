@@ -14,7 +14,7 @@ const Navbar = () => {
   return (
     <div className='container pt-8'>
         <div className='flex justify-between items-center'>
-        <div className='text-xl font-medium  ml-10'>Asad Iqbal </div>
+        <div className='text-xl font-medium  ml-10'>Portfolio</div>
         <ul className='gap-10 lg:gap hidden md:flex'>
             <li className='menuLink'><a href='#hero'>Home</a></li>
             <li className='menuLink'><a href='#about'>About</a></li>
@@ -30,7 +30,7 @@ const Navbar = () => {
         </div>
  
          {isMenuOpen && (
-          <ul className='flex flex-col gap-4 mt-4 md:hidden'>
+          <ul className='flex flex-col gap-4 mt-4 md:hidden px-2'>
             <li className='flex flex-col gap-4'>
               <a href="#hero" onClick={toggleMenu}>Home</a>
               <a href="#about" onClick={toggleMenu}>About</a>
